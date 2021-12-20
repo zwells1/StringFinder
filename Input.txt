@@ -1,0 +1,6 @@
+[DEFAULT]
+RootDirToSearch = .
+
+[Test]
+RootDirToSearch = 'tst'
+SearchFor = abc, xyz, 123

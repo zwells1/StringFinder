@@ -36,7 +36,7 @@ def findStringsInFile(searchFilePaths, strings):
         filetext = textfile.read()
         textfile.close()
         matches = re.findall(strings, filetext, re.IGNORECASE)
-        if matches is not None:
+        if len(matches) > 0:
             foundMatches[eachFile] = detailsOnMatches(matches)
 
     return foundMatches

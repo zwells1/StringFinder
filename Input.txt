@@ -2,5 +2,6 @@
 RootDirToSearch = .
 
 [Test]
-RootDirToSearch = 'tst'
+RootDirToSearch = TestFolder
 SearchFor = abc, xyz, 123
+OutputFilename = Out.txt

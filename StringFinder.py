@@ -1,22 +1,45 @@
 import configparser
 import re
+import os
 import sys
+import time
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-#def findFile
+def findValidFiles(rootDir, fileType):
+
+    paths = []
+    for root, dirs, files in os.walk(rootDir):
+        for file in files:
+            if file.lower().endswith(fileType.lower()):
+                paths.append(os.path.join(root, file))
+
+    return (paths)
+
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
-def findStringsInFile(filename, strings):
+def detailsOnMatches(detailsOnMatches):
+    #remove duplicates that is up to the user to find all of a specific keyword
+    return list(set(detailsOnMatches))
+    #can add more details if desired to each found entry
 
-    textfile = open(filename, 'r')
-    filetext = textfile.read()
-    textfile.close()
-    matches = re.findall(strings, filetext, re.IGNORECASE)
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+def findStringsInFile(searchFilePaths, strings):
 
-    #if matches exist, get the line numbers of each
+    foundMatches = dict()
 
+    for eachFile in searchFilePaths:
+        print("Checking: " + eachFile)
+        textfile = open(eachFile, 'r')
+        filetext = textfile.read()
+        textfile.close()
+        matches = re.findall(strings, filetext, re.IGNORECASE)
+        if matches is not None:
+            foundMatches[eachFile] = detailsOnMatches(matches)
+
+    return foundMatches
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -51,7 +74,19 @@ def main(argv):
 
     Strings = makeRegexExpression(x)
 
-    findStringsInFile('test.txt', Strings)
+    rootDir = config.get('Test','RootDirToSearch')
+
+    foundMatchesDict = findStringsInFile(findValidFiles(rootDir,'txt'), Strings)
+
+
+    #break into a fcn
+    OutputFile = config.get('Test','OutputFilename')
+    OutputFile = time.strftime("%Y%m%d-%H%M%S--") + OutputFile
+    f = open(OutputFile, "a")
+    for key, value in foundMatchesDict.items():
+        f.write('file:  %s:     Strings Found:  %s\n' % (key, value))
+    f.close()
+
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
